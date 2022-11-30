@@ -1,0 +1,29 @@
+# When user trigger this workflow with custom version input, this action will do 3 things:
+# 1) it will create a directory with an empty upgrade handler in app/upgrades folder
+# 2) will increase an E2E_UPGRADE_VERSION variable in Makefile
+# 3) create a pull request with these changes to main
+
+name: On Manual Input Auto Upgrade
+
+on:
+  release: 
+    types: [published]
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Major vesrion to generate. Default value (v1) will ignore the action. Example format: v13'
+        required: true
+        default: 'v1'
+
+jobs:
+  post_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Run version script
+        run: |
+          echo ${{ inputs.version }}
+          echo ${{ github.event.release.tag_name }}
